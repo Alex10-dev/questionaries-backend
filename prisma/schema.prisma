@@ -1,0 +1,115 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_URL")
+}
+
+model Questionary {
+  id String @id @default(uuid()) @db.Uuid
+  name String @db.VarChar(30)
+  description String? @db.Text
+  instructions String? @db.Text
+  image String? @db.VarChar(50)
+  isActive Boolean @db.Boolean @default(true) @map("is_active")
+
+  //relations
+  versions QuestionaryVersion[] @relation("QuestionaryToVersion")
+}
+
+model QuestionaryVersion {
+  id String @id @db.Uuid @default(uuid())
+  isActive Boolean @db.Boolean @default(true) @map("is_active")
+  createdAt DateTime @db.Timestamp() @default(now()) @map("created_at")
+  updatedAt DateTime @db.Timestamp() @updatedAt @map("updated_at")
+  title String @db.VarChar(40)
+  startActiveDate DateTime @db.Timestamp() @default(now()) @map("start_active_date")
+  endActiveDate DateTime? @db.Timestamp() @map("end_active_date")
+
+  //relations
+  questionaryId String @db.Uuid @map("questionary_id")
+  questionary Questionary @relation(name: "QuestionaryToVersion", fields: [questionaryId], references: [id])
+
+  questions QuestionaryVersionToQuestion[]
+  solutions Solution[]
+}
+
+model Question {
+  id String @id @db.Uuid @default(uuid())
+  question String @db.Text
+  type String @db.VarChar(20) @default("TEXT")
+  createdAt DateTime @db.Timestamp() @default(now()) @map("created_at")
+  updatedAt DateTime @db.Timestamp() @updatedAt @map("updated_at")
+  correctAnswer String? @db.VarChar(30) @map("correct_answer")
+  value Float @db.DoublePrecision @default(1)
+  isActive Boolean @db.Boolean @default(true) @map("is_active")
+
+  //relations
+  options Option[]
+  versions QuestionaryVersionToQuestion[]
+  answers Answer[]
+}
+
+model Option {
+  id String @id @db.Uuid @default(uuid())
+  text String @db.Text
+  isCorrect Boolean @db.Boolean @default(false) @map("is_correct")
+
+  //relations
+  questionId String @db.Uuid @map("question_id")
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  @@index([questionId])
+}
+
+model QuestionaryVersionToQuestion {
+  isActive Boolean @db.Boolean @default(true) @map("is_active")
+  
+  //relations
+  questionId String @db.Uuid @map("question_id")
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  versionId String @db.Uuid @map("version_id")
+  version QuestionaryVersion @relation(fields: [versionId], references: [id], onDelete: Cascade)
+
+  @@id([versionId, questionId])
+  @@index([questionId])
+  @@index([versionId])
+}
+
+model Solution {
+  id String @id @db.Uuid @default(uuid())
+  createdAt DateTime @db.Timestamp() @default(now()) @map("created_at")
+  endedAt DateTime? @db.Timestamp() @map("ended_at")
+  ended Boolean @db.Boolean @default(false)
+
+  //relations
+  questionaryVersionId String @db.Uuid @map("questionary_version_id")
+  questionaryVersion QuestionaryVersion @relation(fields: [questionaryVersionId], references: [id], onDelete: Cascade)
+  @@index([questionaryVersionId])
+
+  answers Answer[]
+}
+
+model Answer {
+  id String @id @db.Uuid @default(uuid())
+  createdAt DateTime @db.Timestamp() @default(now()) @map("created_at")
+  textAnswer String? @db.Text @map("text_answer")
+
+  //relations
+  solutionId String @db.Uuid @map("solution_id")
+  solution Solution @relation(fields: [solutionId], references: [id], onDelete: Cascade)
+
+  questionId String @db.Uuid @map("question_id")
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([solutionId])
+  @@index([questionId])
+}
