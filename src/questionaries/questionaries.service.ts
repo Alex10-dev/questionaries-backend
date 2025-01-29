@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { CreateQuestionaryDto } from './dto/create-questionary.dto';
 import { UpdateQuestionaryDto } from './dto/update-questionary.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -102,6 +102,33 @@ export class QuestionariesService {
 
     } catch( error ) {
       throw new InternalServerErrorException(`${ error.message }`);
+    }
+  }
+
+  async deleteAllQuestionaryVersions(questionaryId: string) {
+    try{
+      const questionary = await this.prismaService.questionary.findUnique({
+        where: {id: questionaryId}
+      });
+
+      if ( !questionary ) throw new BadRequestException(`Questionary with id: ${ questionaryId } doesn't exist`);
+
+      const deletedVersions = await this.prismaService.questionaryVersion.deleteMany({
+        where: { questionaryId: questionaryId }
+      });
+
+      if ( deletedVersions.count === 0 ) throw new NotFoundException(`There are no versions for the questionary with id: ${ questionaryId }`);
+
+      return {
+        questionaryId: questionaryId,
+        deletedVersions: deletedVersions.count,
+        message: `Successfully deleted ${deletedVersions.count} version(s) from questionary with id: ${questionaryId}.`
+      };
+
+    } catch( error ) {
+      if ( error instanceof HttpException ) throw error;
+
+      throw new InternalServerErrorException(`${error}`);
     }
   }
 }

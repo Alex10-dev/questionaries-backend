@@ -40,4 +40,9 @@ export class QuestionariesController {
   ) {
     return this.questionariesService.deleteVersion(questionaryId, versionId);
   }
+
+  @Delete(':questionaryId/versions')
+  deleteAllQuestionaryVersions(@Param('questionaryId') questionaryId: string) {
+    return this.questionariesService.deleteAllQuestionaryVersions(questionaryId);
+  }
 }
