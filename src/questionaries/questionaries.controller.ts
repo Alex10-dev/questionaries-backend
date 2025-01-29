@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { QuestionariesService } from './questionaries.service';
 import { CreateQuestionaryDto } from './dto/create-questionary.dto';
 import { UpdateQuestionaryDto } from './dto/update-questionary.dto';
+import { CreateVersionDto } from './dto/create-version.dto';
 
 @Controller('questionaries')
 export class QuestionariesController {
@@ -33,6 +34,14 @@ export class QuestionariesController {
   }
 
   //questionary Versions
+  @Post(':questionaryId/version')
+  createVersion(
+    @Body() createVersionDto: CreateVersionDto,
+    @Param('questionaryId') questionaryId: string,
+  ) {
+    return this.questionariesService.createVersion(questionaryId, createVersionDto);
+  }
+
   @Delete(':questionaryId/version/:versionId')
   deleteVersion(
     @Param('questionaryId') questionaryId: string,
