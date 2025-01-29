@@ -85,15 +85,28 @@ export class QuestionariesService {
     }
   }
 
-  async deleteVersion(questionaryId: string, versionId: string) {
+  async findOneVersion(questionaryId: string, versionId: string) {
     try{
-      const versionExist = await this.prismaService.questionaryVersion.findUnique({
+      const version = await this.prismaService.questionaryVersion.findUnique({
         where: {id: versionId}
       });
 
-      if( !versionExist ) throw new BadRequestException(`Questionary Version with id: ${versionId} doesn't exist`);
-      if( versionExist.questionaryId != questionaryId ) throw new BadRequestException(`The version doesn't contain the same questionaryId: ${questionaryId}`);
+      if( !version ) throw new BadRequestException(`Questionary Version with id: ${versionId} doesn't exist`);
+      if( version.questionaryId != questionaryId ) throw new BadRequestException(`The version doesn't contain the same questionaryId: ${questionaryId}`);
       
+      return version;
+
+    } catch( error ) {
+      if ( error instanceof HttpException ) throw error;
+
+      throw new InternalServerErrorException(`${error}`);
+    }
+  }
+
+  async deleteVersion(questionaryId: string, versionId: string) {
+    try{
+      await this.findOneVersion(questionaryId, versionId);
+
       const deletedVersion = await this.prismaService.questionaryVersion.delete({
         where: {id: versionId, questionaryId: questionaryId}
       });
@@ -101,7 +114,9 @@ export class QuestionariesService {
       return { id: deletedVersion.id };
 
     } catch( error ) {
-      throw new InternalServerErrorException(`${ error.message }`);
+      if ( error instanceof HttpException ) throw error;
+
+      throw new InternalServerErrorException(`${error}`);
     }
   }
 

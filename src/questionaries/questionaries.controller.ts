@@ -34,6 +34,14 @@ export class QuestionariesController {
   }
 
   //questionary Versions
+  @Get(':questionaryId/version/:versionId')
+  findOneVersion(
+    @Param('questionaryId') questionaryId: string,
+    @Param('versionId') versionId: string,
+  ) {
+    return this.questionariesService.findOneVersion(questionaryId, versionId);
+  }
+
   @Post(':questionaryId/version')
   createVersion(
     @Body() createVersionDto: CreateVersionDto,
