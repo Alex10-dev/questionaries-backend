@@ -3,6 +3,7 @@ import { QuestionariesService } from './questionaries.service';
 import { CreateQuestionaryDto } from './dto/create-questionary.dto';
 import { UpdateQuestionaryDto } from './dto/update-questionary.dto';
 import { CreateVersionDto } from './dto/create-version.dto';
+import { UpdateVersionDto } from './dto/update-version.dto';
 
 @Controller('questionaries')
 export class QuestionariesController {
@@ -42,12 +43,28 @@ export class QuestionariesController {
     return this.questionariesService.findOneVersion(questionaryId, versionId);
   }
 
+  @Get(':questionaryId/versions')
+  findAllVersions(
+    @Param('questionaryId') questionaryId: string,
+  ) {
+    return this.questionariesService.findAllVersions(questionaryId);
+  }
+
   @Post(':questionaryId/version')
   createVersion(
     @Body() createVersionDto: CreateVersionDto,
     @Param('questionaryId') questionaryId: string,
   ) {
     return this.questionariesService.createVersion(questionaryId, createVersionDto);
+  }
+
+  @Patch(':questionaryId/version/:versionId')
+  updateVersion(
+    @Param('questionaryId') questionaryId: string,
+    @Param('versionId') versionId: string,
+    @Body() updateVersionDto: UpdateVersionDto,
+  ) {
+    return this.questionariesService.updateVersion(questionaryId, versionId, updateVersionDto);
   }
 
   @Delete(':questionaryId/version/:versionId')

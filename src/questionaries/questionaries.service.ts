@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateVersionDto } from './dto/create-version.dto';
 import { validateSync } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
+import { UpdateVersionDto } from './dto/update-version.dto';
 
 @Injectable()
 export class QuestionariesService {
@@ -95,6 +96,45 @@ export class QuestionariesService {
       if( version.questionaryId != questionaryId ) throw new BadRequestException(`The version doesn't contain the same questionaryId: ${questionaryId}`);
       
       return version;
+
+    } catch( error ) {
+      if ( error instanceof HttpException ) throw error;
+
+      throw new InternalServerErrorException(`${error}`);
+    }
+  }
+
+  async findAllVersions(questionaryId: string) {
+    try{
+      const versions = await this.prismaService.questionaryVersion.findMany({
+        where: {questionaryId: questionaryId}
+      });
+
+      if( !versions ) throw new NotFoundException(`There are no versions for the questionary with id: ${ questionaryId }`);
+      
+      return versions;
+
+    } catch( error ) {
+      if ( error instanceof HttpException ) throw error;
+
+      throw new InternalServerErrorException(`${error}`);
+    }
+  }
+
+  async updateVersion(questionaryId: string, versionId: string, updateVersionDto: UpdateVersionDto) {
+    try{
+      await this.findOneVersion(questionaryId, versionId);
+
+      const updatedVersion = await this.prismaService.questionaryVersion.update({
+        data: {
+          title: updateVersionDto.title,
+          isActive: updateVersionDto.isActive,
+          endActiveDate: updateVersionDto.endActiveDate
+        },
+        where: {id: versionId, questionaryId: questionaryId}
+      });
+
+      return updatedVersion;
 
     } catch( error ) {
       if ( error instanceof HttpException ) throw error;
