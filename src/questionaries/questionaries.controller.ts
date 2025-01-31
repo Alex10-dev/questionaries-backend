@@ -21,7 +21,7 @@ export class QuestionariesController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.questionariesService.findOne(+id);
+    return this.questionariesService.findOne(id);
   }
 
   @Patch(':id')

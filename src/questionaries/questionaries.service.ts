@@ -26,7 +26,7 @@ export class QuestionariesService {
       }
 
       const transaction = await this.prismaService.$transaction(
-        async (prisma) => {
+        async () => {
           const questionary = await this.prismaService.questionary.create({
             data: {
               name: createQuestionaryDto.name,
@@ -50,12 +50,34 @@ export class QuestionariesService {
   }
 
   async findAll() {
-    return await this.prismaService.questionary.findMany();
-    // return `This action returns all questionaries`;
+    try{
+      const questionaries = await this.prismaService.questionary.findMany();
+
+      if( !questionaries ) throw new NotFoundException(`There are no questionaries in the data base`);
+
+      return questionaries;
+
+    } catch( error ) {
+      if( error instanceof HttpException ) throw error;
+
+      throw new InternalServerErrorException(`${error}`);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} questionary`;
+  async findOne(id: string) {
+    try{
+      const questionary = await this.prismaService.questionary.findUnique({
+        where: {id}
+      });
+
+      if( !questionary ) throw new NotFoundException(`There is no a questionary with id: ${id}`);
+      return questionary;
+
+    } catch( error ) {
+
+      if( error instanceof HttpException ) throw error;
+      throw new InternalServerErrorException(`${error}`);
+    }
   }
 
   update(id: number, updateQuestionaryDto: UpdateQuestionaryDto) {
