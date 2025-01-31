@@ -26,7 +26,7 @@ export class QuestionariesController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateQuestionaryDto: UpdateQuestionaryDto) {
-    return this.questionariesService.update(+id, updateQuestionaryDto);
+    return this.questionariesService.update(id, updateQuestionaryDto);
   }
 
   @Delete(':id')

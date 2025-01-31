@@ -9,7 +9,7 @@ import { UpdateVersionDto } from './dto/update-version.dto';
 
 @Injectable()
 export class QuestionariesService {
-
+                                                                                                                            
   constructor(private prismaService: PrismaService){}
 
   async create(createQuestionaryDto: CreateQuestionaryDto) {
@@ -80,8 +80,26 @@ export class QuestionariesService {
     }
   }
 
-  update(id: number, updateQuestionaryDto: UpdateQuestionaryDto) {
-    return `This action updates a #${id} questionary`;
+  async update(id: string, updateQuestionaryDto: UpdateQuestionaryDto) {
+    try{
+      await this.findOne(id);
+
+      const updatedQuestionary = await this.prismaService.questionary.update({
+        data: {
+          name: updateQuestionaryDto.name,
+          isActive: updateQuestionaryDto.isActive,
+          description: updateQuestionaryDto.description,
+          instructions: updateQuestionaryDto.instructions,
+        },
+        where: {id}
+      });
+
+      return updatedQuestionary;
+
+    } catch( error ) {
+      if( error instanceof HttpException ) throw error;
+      throw new InternalServerErrorException(`${error}`);
+    }
   }
 
   remove(id: number) {
