@@ -70,7 +70,7 @@ export class QuestionariesService {
         where: {id}
       });
 
-      if( !questionary ) throw new NotFoundException(`There is no a questionary with id: ${id}`);
+      if( !questionary ) throw new NotFoundException(`Questionary with id: ${ id } doesn't exist`);
       return questionary;
 
     } catch( error ) {
@@ -102,14 +102,30 @@ export class QuestionariesService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} questionary`;
-  }
+  async remove(id: string) {
+    try{
+      await this.findOne(id);
+      const deletedVersions = await this.deleteAllQuestionaryVersions(id);
+      const deletedQuestionary = await this.prismaService.questionary.delete({
+        where: {id}
+      });
 
+      return { 
+        questionaryId: deletedQuestionary.id,
+        deletedVersions: deletedVersions.deletedVersions,
+        message: `Successfully deleted questionary with id: ${deletedQuestionary.id}.`
+      };
+
+    } catch( error ) {
+      if ( error instanceof HttpException ) throw error;
+      throw new InternalServerErrorException(`${error}`);
+    }
+  }
 
   //questionary versions
   async createVersion(questionaryId: string, createVersionDto: CreateVersionDto) {
     try{
+      await this.findOne(questionaryId);
       const version = await this.prismaService.questionaryVersion.create({
         data: {
           title: createVersionDto.title,
@@ -146,6 +162,7 @@ export class QuestionariesService {
 
   async findAllVersions(questionaryId: string) {
     try{
+      await this.findOne(questionaryId);
       const versions = await this.prismaService.questionaryVersion.findMany({
         where: {questionaryId: questionaryId}
       });
@@ -163,6 +180,7 @@ export class QuestionariesService {
 
   async updateVersion(questionaryId: string, versionId: string, updateVersionDto: UpdateVersionDto) {
     try{
+      await this.findOne(questionaryId);
       await this.findOneVersion(questionaryId, versionId);
 
       const updatedVersion = await this.prismaService.questionaryVersion.update({
@@ -185,6 +203,7 @@ export class QuestionariesService {
 
   async deleteVersion(questionaryId: string, versionId: string) {
     try{
+      await this.findOne(questionaryId);
       await this.findOneVersion(questionaryId, versionId);
 
       const deletedVersion = await this.prismaService.questionaryVersion.delete({
@@ -202,27 +221,22 @@ export class QuestionariesService {
 
   async deleteAllQuestionaryVersions(questionaryId: string) {
     try{
-      const questionary = await this.prismaService.questionary.findUnique({
-        where: {id: questionaryId}
-      });
-
-      if ( !questionary ) throw new BadRequestException(`Questionary with id: ${ questionaryId } doesn't exist`);
-
+      await this.findOne(questionaryId);
+      
       const deletedVersions = await this.prismaService.questionaryVersion.deleteMany({
         where: { questionaryId: questionaryId }
       });
 
-      if ( deletedVersions.count === 0 ) throw new NotFoundException(`There are no versions for the questionary with id: ${ questionaryId }`);
-
       return {
         questionaryId: questionaryId,
         deletedVersions: deletedVersions.count,
-        message: `Successfully deleted ${deletedVersions.count} version(s) from questionary with id: ${questionaryId}.`
+        message: ( deletedVersions.count === 0 ) 
+          ? `There aren't version(s) from questionary with id: ${questionaryId}.`
+          : `Successfully deleted ${deletedVersions.count} version(s) from questionary with id: ${questionaryId}.`
       };
 
     } catch( error ) {
       if ( error instanceof HttpException ) throw error;
-
       throw new InternalServerErrorException(`${error}`);
     }
   }

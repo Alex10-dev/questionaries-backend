@@ -31,7 +31,7 @@ export class QuestionariesController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.questionariesService.remove(+id);
+    return this.questionariesService.remove(id);
   }
 
   //questionary Versions
