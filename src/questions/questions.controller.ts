@@ -9,7 +9,15 @@ export class QuestionsController {
 
   @Post()
   create(@Body() createQuestionDto: CreateQuestionDto) {
-    return this.questionsService.create(createQuestionDto);
+    return this.questionsService.createQuestion(createQuestionDto);
+  }
+
+  @Post('/questionary-version/:versionId')
+  createQuestionForVersion(
+    @Body() createQuestionDto: CreateQuestionDto,
+    @Param('versionId') versionId: string,
+  ) {
+    return this.questionsService.createQuestionForVersion(versionId, createQuestionDto);
   }
 
   @Get()

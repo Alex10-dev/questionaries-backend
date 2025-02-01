@@ -160,6 +160,23 @@ export class QuestionariesService {
     }
   }
 
+  async findVersionById(versionId: string) {
+    try{
+      const version = await this.prismaService.questionaryVersion.findUnique({
+        where: {id: versionId}
+      });
+
+      if( !version ) throw new BadRequestException(`Questionary Version with id: ${versionId} doesn't exist`);
+      
+      return version;
+
+    } catch( error ) {
+      if ( error instanceof HttpException ) throw error;
+
+      throw new InternalServerErrorException(`${error}`);
+    }
+  }
+
   async findAllVersions(questionaryId: string) {
     try{
       await this.findOne(questionaryId);

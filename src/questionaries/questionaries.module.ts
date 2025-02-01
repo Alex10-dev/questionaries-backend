@@ -7,5 +7,6 @@ import { PrismaModule } from 'src/prisma/prisma.module';
   controllers: [QuestionariesController],
   providers: [QuestionariesService],
   imports: [PrismaModule],
+  exports: [QuestionariesService],
 })
 export class QuestionariesModule {}
