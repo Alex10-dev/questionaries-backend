@@ -10,7 +10,6 @@ export class QuestionsService {
   
   constructor(
     private prismaService: PrismaService,
-    private questionaryService: QuestionariesService
   ){}
 
   async createQuestion(createQuestionDto: CreateQuestionDto) {
@@ -32,30 +31,10 @@ export class QuestionsService {
     }
   }
 
-  async createQuestionForVersion(versionId: string, createQuestionDto: CreateQuestionDto) {
-    try{
-      await this.questionaryService.findVersionById(versionId);
-
-      const transaction = await this.prismaService.$transaction(
-        async (prisma) => {
-          const newQuestion: Question = await this.createQuestion(createQuestionDto);
-          await this.prismaService.questionaryVersionToQuestion.create({
-            data: {
-              versionId,
-              questionId: newQuestion.id,
-            }
-          });
-
-          return newQuestion
-        }
-      );
-
-      return transaction;
-
-    } catch( error ) {
-      if( error instanceof HttpException ) throw error;
-      throw new InternalServerErrorException(`${error}`);
-    }
+  async linkQuestionToVersion(questionId: string, versionId: string) {
+    return this.prismaService.questionaryVersionToQuestion.create({
+      data: { versionId, questionId, }
+    });
   }
 
   findAll() {

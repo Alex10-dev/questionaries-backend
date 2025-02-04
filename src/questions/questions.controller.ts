@@ -2,10 +2,17 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { QuestionsService } from './questions.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
+import { CreateQuestionForVersionUseCase } from './use-cases/create-question-for-version.use-case';
 
 @Controller('questions')
 export class QuestionsController {
-  constructor(private readonly questionsService: QuestionsService) {}
+
+  constructor(
+    private readonly questionsService: QuestionsService,
+
+    //use cases
+    private readonly createQuestionForVersionUseCase: CreateQuestionForVersionUseCase,
+  ) {}
 
   @Post()
   create(@Body() createQuestionDto: CreateQuestionDto) {
@@ -17,7 +24,7 @@ export class QuestionsController {
     @Body() createQuestionDto: CreateQuestionDto,
     @Param('versionId') versionId: string,
   ) {
-    return this.questionsService.createQuestionForVersion(versionId, createQuestionDto);
+    return this.createQuestionForVersionUseCase.execute(versionId, createQuestionDto);
   }
 
   @Get()
