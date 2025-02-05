@@ -3,6 +3,8 @@ import { QuestionsService } from './questions.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
 import { CreateQuestionForVersionUseCase } from './use-cases/create-question-for-version.use-case';
+import { GetQuestionByID } from './use-cases/get-question-by-id';
+import { GetAllQuestionsForVersionUseCase } from './use-cases/get-all-questions-for-version.use-case';
 
 @Controller('questions')
 export class QuestionsController {
@@ -12,6 +14,8 @@ export class QuestionsController {
 
     //use cases
     private readonly createQuestionForVersionUseCase: CreateQuestionForVersionUseCase,
+    private readonly getQuestionByID: GetQuestionByID,
+    private readonly getAllQuestionsForVersion: GetAllQuestionsForVersionUseCase,
   ) {}
 
   @Post()
@@ -32,9 +36,14 @@ export class QuestionsController {
     return this.questionsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.questionsService.findOne(+id);
+  @Get('/questionary-version/:versionId')
+  findAllQuestionsForVersion(@Param('versionId') versionId: string) {
+    return this.getAllQuestionsForVersion.execute( versionId );
+  }
+
+  @Get(':questionId')
+  findOne(@Param('questionId') questionId: string) {
+    return this.getQuestionByID.execute( questionId );
   }
 
   @Patch(':id')

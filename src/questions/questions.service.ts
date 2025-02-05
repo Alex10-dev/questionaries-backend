@@ -32,17 +32,26 @@ export class QuestionsService {
   }
 
   async linkQuestionToVersion(questionId: string, versionId: string) {
-    return this.prismaService.questionaryVersionToQuestion.create({
+    return await this.prismaService.questionaryVersionToQuestion.create({
       data: { versionId, questionId, }
     });
   }
 
-  findAll() {
-    return `This action returns all questions`;
+  async findAll() {
+    return await this.prismaService.question.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} question`;
+  async findAllQuestionsForVersion(versionId: string) {
+    return await this.prismaService.questionaryVersionToQuestion.findMany({
+      where: { versionId },
+      include: { question: true, }
+    });
+  }
+
+  async findOne(id: string) {
+    return await this.prismaService.question.findUnique({
+      where: { id }
+    });
   }
 
   update(id: number, updateQuestionDto: UpdateQuestionDto) {

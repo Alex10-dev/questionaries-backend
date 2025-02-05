@@ -4,6 +4,8 @@ import { QuestionsController } from './questions.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { QuestionariesModule } from 'src/questionaries/questionaries.module';
 import { CreateQuestionForVersionUseCase } from './use-cases/create-question-for-version.use-case';
+import { GetQuestionByID } from './use-cases/get-question-by-id';
+import { GetAllQuestionsForVersionUseCase } from './use-cases/get-all-questions-for-version.use-case';
 
 @Module({
   controllers: [QuestionsController],
@@ -11,7 +13,9 @@ import { CreateQuestionForVersionUseCase } from './use-cases/create-question-for
     QuestionsService, 
     
     //use cases
-    CreateQuestionForVersionUseCase
+    CreateQuestionForVersionUseCase,
+    GetQuestionByID,
+    GetAllQuestionsForVersionUseCase,
   ],
   imports: [PrismaModule, QuestionariesModule],
 })
