@@ -5,6 +5,7 @@ import { UpdateQuestionDto } from './dto/update-question.dto';
 import { CreateQuestionForVersionUseCase } from './use-cases/create-question-for-version.use-case';
 import { GetQuestionByID } from './use-cases/get-question-by-id';
 import { GetAllQuestionsForVersionUseCase } from './use-cases/get-all-questions-for-version.use-case';
+import { UpdateQuestionUseCase } from './use-cases/update-question.use-case';
 
 @Controller('questions')
 export class QuestionsController {
@@ -16,6 +17,7 @@ export class QuestionsController {
     private readonly createQuestionForVersionUseCase: CreateQuestionForVersionUseCase,
     private readonly getQuestionByID: GetQuestionByID,
     private readonly getAllQuestionsForVersion: GetAllQuestionsForVersionUseCase,
+    private readonly updateQuestionUseCase: UpdateQuestionUseCase,
   ) {}
 
   @Post()
@@ -46,9 +48,12 @@ export class QuestionsController {
     return this.getQuestionByID.execute( questionId );
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateQuestionDto: UpdateQuestionDto) {
-    return this.questionsService.update(+id, updateQuestionDto);
+  @Patch(':questionId')
+  update(
+    @Param('questionId') questionId: string, 
+    @Body() updateQuestionDto: UpdateQuestionDto
+  ) {
+    return this.updateQuestionUseCase.execute( questionId, updateQuestionDto );
   }
 
   @Delete(':id')
