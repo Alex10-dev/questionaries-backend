@@ -47,6 +47,14 @@ export class QuestionsService {
     });
   }
 
+  async findQuestionInVersion(questionId: string, versionId: string) {
+    return await this.prismaService.questionaryVersionToQuestion.findUnique({
+      where: { versionId_questionId: {
+        questionId, versionId,
+      }}
+    });
+  }
+
   async findOne(id: string) {
     return await this.prismaService.question.findUnique({
       where: { id }

@@ -6,6 +6,7 @@ import { CreateQuestionForVersionUseCase } from './use-cases/create-question-for
 import { GetQuestionByID } from './use-cases/get-question-by-id';
 import { GetAllQuestionsForVersionUseCase } from './use-cases/get-all-questions-for-version.use-case';
 import { UpdateQuestionUseCase } from './use-cases/update-question.use-case';
+import { AddQuestionToVersionUseCase } from './use-cases/add-question-to-version.use-case';
 
 @Controller('questions')
 export class QuestionsController {
@@ -18,6 +19,7 @@ export class QuestionsController {
     private readonly getQuestionByID: GetQuestionByID,
     private readonly getAllQuestionsForVersion: GetAllQuestionsForVersionUseCase,
     private readonly updateQuestionUseCase: UpdateQuestionUseCase,
+    private readonly addQuestionToVersion: AddQuestionToVersionUseCase,
   ) {}
 
   @Post()
@@ -31,6 +33,14 @@ export class QuestionsController {
     @Param('versionId') versionId: string,
   ) {
     return this.createQuestionForVersionUseCase.execute(versionId, createQuestionDto);
+  }
+
+  @Post(':questionId/questionary-version/:versionId')
+  addQuestionToQuestionaryVersion(
+    @Param('questionId') questionId: string,
+    @Param('versionId') versionId: string,
+  ) {
+    return this.addQuestionToVersion.execute(questionId, versionId);
   }
 
   @Get()

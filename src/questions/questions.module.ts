@@ -7,6 +7,7 @@ import { CreateQuestionForVersionUseCase } from './use-cases/create-question-for
 import { GetQuestionByID } from './use-cases/get-question-by-id';
 import { GetAllQuestionsForVersionUseCase } from './use-cases/get-all-questions-for-version.use-case';
 import { UpdateQuestionUseCase } from './use-cases/update-question.use-case';
+import { AddQuestionToVersionUseCase } from './use-cases/add-question-to-version.use-case';
 
 @Module({
   controllers: [QuestionsController],
@@ -18,6 +19,7 @@ import { UpdateQuestionUseCase } from './use-cases/update-question.use-case';
     GetQuestionByID,
     GetAllQuestionsForVersionUseCase,
     UpdateQuestionUseCase,
+    AddQuestionToVersionUseCase,
   ],
   imports: [PrismaModule, QuestionariesModule],
 })
