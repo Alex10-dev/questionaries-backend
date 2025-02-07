@@ -8,6 +8,8 @@ import { GetQuestionByID } from './use-cases/get-question-by-id';
 import { GetAllQuestionsForVersionUseCase } from './use-cases/get-all-questions-for-version.use-case';
 import { UpdateQuestionUseCase } from './use-cases/update-question.use-case';
 import { AddQuestionToVersionUseCase } from './use-cases/add-question-to-version.use-case';
+import { RemoveQuestionFromVersionUseCase } from './use-cases/remove-question-from-version.use-case';
+import { DeleteQuestionUseCase } from './use-cases/delete-question.use-case';
 
 @Module({
   controllers: [QuestionsController],
@@ -20,6 +22,8 @@ import { AddQuestionToVersionUseCase } from './use-cases/add-question-to-version
     GetAllQuestionsForVersionUseCase,
     UpdateQuestionUseCase,
     AddQuestionToVersionUseCase,
+    RemoveQuestionFromVersionUseCase,
+    DeleteQuestionUseCase,
   ],
   imports: [PrismaModule, QuestionariesModule],
 })

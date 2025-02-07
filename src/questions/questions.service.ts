@@ -68,7 +68,24 @@ export class QuestionsService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} question`;
+  async remove(id: string) {
+    return await this.prismaService.question.delete({
+      where: { id }
+    });
   }
+
+  async removeQuestionFromVersion(questionId: string, versionId: string) {
+    return await this.prismaService.questionaryVersionToQuestion.delete({
+      where: { versionId_questionId : {
+        questionId, versionId
+      }}
+    });
+  }
+
+  async removeQuestionFromAllVersions(questionId: string) {
+    return await this.prismaService.questionaryVersionToQuestion.deleteMany({
+      where: { questionId }
+    });
+  }
+
 }

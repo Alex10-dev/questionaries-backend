@@ -7,6 +7,8 @@ import { GetQuestionByID } from './use-cases/get-question-by-id';
 import { GetAllQuestionsForVersionUseCase } from './use-cases/get-all-questions-for-version.use-case';
 import { UpdateQuestionUseCase } from './use-cases/update-question.use-case';
 import { AddQuestionToVersionUseCase } from './use-cases/add-question-to-version.use-case';
+import { RemoveQuestionFromVersionUseCase } from './use-cases/remove-question-from-version.use-case';
+import { DeleteQuestionUseCase } from './use-cases/delete-question.use-case';
 
 @Controller('questions')
 export class QuestionsController {
@@ -20,6 +22,8 @@ export class QuestionsController {
     private readonly getAllQuestionsForVersion: GetAllQuestionsForVersionUseCase,
     private readonly updateQuestionUseCase: UpdateQuestionUseCase,
     private readonly addQuestionToVersion: AddQuestionToVersionUseCase,
+    private readonly removeQuestionFromVersionUseCase: RemoveQuestionFromVersionUseCase,
+    private readonly deleteQuestionUseCase: DeleteQuestionUseCase,
   ) {}
 
   @Post()
@@ -66,8 +70,16 @@ export class QuestionsController {
     return this.updateQuestionUseCase.execute( questionId, updateQuestionDto );
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.questionsService.remove(+id);
+  @Delete(':questionId')
+  remove(@Param('questionId') questionId: string) {
+    return this.deleteQuestionUseCase.execute( questionId );
+  }
+
+  @Delete(':questionId/questionary-version/:versionId')
+  removeQuestionFromVersion(
+    @Param('questionId') questionId: string,
+    @Param('versionId') versionId: string,
+  ) {
+    return this.removeQuestionFromVersionUseCase.execute(questionId, versionId);
   }
 }
