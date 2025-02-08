@@ -1,7 +1,6 @@
 import { HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateQuestionDto } from './dto/create-question.dto';
-import { UpdateQuestionDto } from './dto/update-question.dto';
-import { Question } from '@prisma/client';
+import { Option, Question } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -85,6 +84,42 @@ export class QuestionsService {
   async removeQuestionFromAllVersions(questionId: string) {
     return await this.prismaService.questionaryVersionToQuestion.deleteMany({
       where: { questionId }
+    });
+  }
+
+  //options
+  async createOptionForQuestion(questionId: string, data: Partial<Option>) {
+    return await this.prismaService.option.create({
+      data: {
+        text: data.text!,
+        isCorrect: data.isCorrect,
+        questionId: questionId,
+      }
+    });
+  }
+
+  async getOptionsFromQuestion(questionId: string) {
+    return await this.prismaService.option.findMany({
+      where: { questionId }
+    });
+  }
+
+  async findOneOption(optionId: string) {
+    return await this.prismaService.option.findUnique({
+      where: {id: optionId}
+    });
+  }
+
+  async updateOption(optionId: string, questionId: string, data: Partial<Option>) {
+    return await this.prismaService.option.update({
+      where: { id: optionId, questionId },
+      data
+    });
+  }
+
+  async deleteOption(optionId: string, questionId: string) {
+    return await this.prismaService.option.delete({
+      where: { id: optionId, questionId }
     });
   }
 

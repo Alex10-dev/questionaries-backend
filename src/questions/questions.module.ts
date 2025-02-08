@@ -10,6 +10,11 @@ import { UpdateQuestionUseCase } from './use-cases/update-question.use-case';
 import { AddQuestionToVersionUseCase } from './use-cases/add-question-to-version.use-case';
 import { RemoveQuestionFromVersionUseCase } from './use-cases/remove-question-from-version.use-case';
 import { DeleteQuestionUseCase } from './use-cases/delete-question.use-case';
+import { CreateOptionForQuestionUseCase } from './use-cases/create-option-for-question.use-case';
+import { GetOptionsFromQuestionUseCase } from './use-cases/get-options-from-question.use-case';
+import { GetOneOptionFromQuestionUseCase } from './use-cases/get-one-option-from-question.use-case';
+import { UpdateOptionUseCase } from './use-cases/update-option.use-case';
+import { DeleteOptionUseCase } from './use-cases/delete-option.use-case';
 
 @Module({
   controllers: [QuestionsController],
@@ -24,6 +29,11 @@ import { DeleteQuestionUseCase } from './use-cases/delete-question.use-case';
     AddQuestionToVersionUseCase,
     RemoveQuestionFromVersionUseCase,
     DeleteQuestionUseCase,
+    CreateOptionForQuestionUseCase,
+    GetOptionsFromQuestionUseCase,
+    GetOneOptionFromQuestionUseCase,
+    UpdateOptionUseCase,
+    DeleteOptionUseCase,
   ],
   imports: [PrismaModule, QuestionariesModule],
 })
