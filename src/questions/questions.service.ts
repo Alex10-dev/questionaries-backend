@@ -36,13 +36,19 @@ export class QuestionsService {
   }
 
   async findAll() {
-    return await this.prismaService.question.findMany();
+    return await this.prismaService.question.findMany({
+      include: { options: true }
+    });
   }
 
   async findAllQuestionsForVersion(versionId: string) {
     return await this.prismaService.questionaryVersionToQuestion.findMany({
       where: { versionId },
-      include: { question: true, }
+      include: { 
+        question: {
+          include: { options: true }
+        }
+      }
     });
   }
 
@@ -56,7 +62,8 @@ export class QuestionsService {
 
   async findOne(id: string) {
     return await this.prismaService.question.findUnique({
-      where: { id }
+      where: { id },
+      include: { options: true }
     });
   }
 
