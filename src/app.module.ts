@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { EnvConfig, Envs, ValidationSchema } from './config/env.config';
 import { PrismaModule } from './prisma/prisma.module';
 import { QuestionariesModule } from './questionaries/questionaries.module';
+import { QuestionsModule } from './questions/questions.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { QuestionariesModule } from './questionaries/questionaries.module';
     }),
     PrismaModule,
     QuestionariesModule,
+    QuestionsModule,
   ],
   providers: [EnvConfig],
   exports: [EnvConfig],
