@@ -130,4 +130,10 @@ export class QuestionsService {
     });
   }
 
+  async deleteOptionsFromQuestion(questionId: string) {
+    return await this.prismaService.option.deleteMany({
+      where: { questionId }
+    });
+  }
+
 }

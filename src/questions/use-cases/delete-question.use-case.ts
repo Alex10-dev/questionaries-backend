@@ -2,6 +2,7 @@ import { HttpException, Injectable, InternalServerErrorException } from "@nestjs
 import { QuestionsService } from "../questions.service";
 import { GetQuestionByID } from "./get-question-by-id";
 import { PrismaService } from "src/prisma/prisma.service";
+import { QuestionType } from "src/common/question-type.enum";
 
 @Injectable()
 export class DeleteQuestionUseCase {
@@ -19,11 +20,16 @@ export class DeleteQuestionUseCase {
             const transaction = await this.prismaService.$transaction(
                 async (prisma) => {
                     const deletedRelations = await this.questionsService.removeQuestionFromAllVersions(questionId);
+                    
+                    let deletedOptions = 0;
+                    if( question.type != QuestionType.TEXT ) {
+                        deletedOptions = (await this.questionsService.deleteOptionsFromQuestion( question.id )).count;
+                    }
                     const deletedQuestion = await this.questionsService.remove(question.id);
-
                     return {
                         question: deletedQuestion,
                         removedFromVersions: deletedRelations.count,
+                        deletedOptions: deletedOptions,
                     };
                 }
             )
