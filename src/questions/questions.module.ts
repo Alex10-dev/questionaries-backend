@@ -36,5 +36,6 @@ import { DeleteOptionUseCase } from './use-cases/delete-option.use-case';
     DeleteOptionUseCase,
   ],
   imports: [PrismaModule, QuestionariesModule],
+  exports: [QuestionsService, GetAllQuestionsForVersionUseCase],
 })
 export class QuestionsModule {}
